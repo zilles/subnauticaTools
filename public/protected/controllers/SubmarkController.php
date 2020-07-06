@@ -1,0 +1,171 @@
+<?php
+use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment;
+use League\CommonMark\Extension\Table\TableExtension;
+
+class SubmarkController extends Controller
+{
+
+    public function defaultSource()
+    {
+        return <<<EOL
+Glitchless Any% survival
+----
+
+* Make **scanner** {copper} {titanium} {acidmushroom:2}
+* Make a seaglide, knife and std tank.  
+  {copper:3} {titanium:5} {creepvineseedcluster:2} {acidmushroom:2}
+* *Profit* {Gold:2}
+
+|Step|Result|
+|-|-|
+|Get fruit {creepvineseedcluster}|Make Lube {lubricant}| 
+|Get tooth {stalkertooth}|Make Enamel {enameledglass}| 
+EOL;
+    }
+
+	public function actionIndex()
+	{
+	    $source = CHtml::value($_POST, "source",$this->defaultSource());
+	    $html="";
+
+	    if ($source)
+        {
+            spl_autoload_unregister(array('YiiBase','autoload'));
+            require Yii::getPathOfAlias('application.vendor').DIRECTORY_SEPARATOR.'autoload.php';
+            spl_autoload_register(array('YiiBase','autoload'));
+            // Obtain a pre-configured Environment with all the CommonMark parsers/renderers ready-to-go
+            $environment = Environment::createCommonMarkEnvironment();
+            // Add this extension
+            $environment->addExtension(new TableExtension());
+            $environment->addDelimiterProcessor(new SubImage());
+
+            $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false], $environment);
+            $html = $converter->convertToHtml($source);
+
+            if (isset($_POST["pdf"]))
+            {
+                $htmlWithShell = $this->renderPartial('pdf', [
+                    'html'=>$html,
+                ], true);
+                $this->sendPDF($htmlWithShell);
+                exit;
+            }
+        }
+
+
+		$this->render('index', [
+		    "source"=>$source,
+            "html"=>$html,
+        ]);
+	}
+
+    public static function fileURL($path)
+    {
+        $real = realpath($path);
+        if ($real)
+        {
+            $real = str_replace(DIRECTORY_SEPARATOR, "/", $real);
+            if (substr($real, 0,1) !== '/')
+                $real = '/'.$real;
+
+            return "file://".$real;
+        }
+
+        throw new CException("Attempting to create file url from invalid path: ".$path);
+    }
+
+    public static function my_exec($cmd, $input='', $cwd=null)
+    {
+        $runtime = dirname(__DIR__).DIRECTORY_SEPARATOR."runtime";
+        $outfile = tempnam($runtime, "cmd");
+        $errfile = tempnam($runtime, "cmd");
+        $descriptorspec = array(
+            0 => array("pipe", "r"),
+            1 => array("file", $outfile, "w"),
+            2 => array("file", $errfile, "w")
+        );
+        $proc=proc_open($cmd, $descriptorspec, $pipes, $cwd);
+        if (is_resource($proc)) {
+            fwrite($pipes[0], $input);
+            fclose($pipes[0]);
+            $rtn=proc_close($proc);
+            $stdout = file_get_contents($outfile);
+            $stderr = file_get_contents($errfile);
+            unlink($outfile);
+            unlink($errfile);
+            return array('stdout'=>$stdout,
+                'stderr'=>$stderr,
+                'return'=>$rtn
+            );
+        }
+
+        return array('stdout'=>'', 'stderr'=>'', 'return'=>-1 );
+    }
+
+    public static function streamPdf($file, $name, $attachment = true)
+    {
+        $type = $attachment? "attachment" : "inline";
+        header('Pragma:');
+        header('Cache-Control: private,no-cache');
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: '.$type.'; filename="'.str_replace('"','\\"',$name).'"');
+        readfile($file);
+    }
+
+    public function sendPDF($html)
+    {
+        $runtime = dirname(__DIR__).DIRECTORY_SEPARATOR."runtime";
+        $pdfFile = tempnam($runtime, "pdf");
+        $htmlFile = tempnam($runtime, "html");
+        file_put_contents($htmlFile, $html);
+
+        $baseurl = self::fileURL("")."/";
+
+        // Get a file path to the public directory
+        $weasyprint = CHtml::value(Yii::app()->params,"weasyprint","weasyprint");
+        $cmd = "$weasyprint -u $baseurl -e utf8 -f pdf -v $htmlFile $pdfFile";
+        $results = self::my_exec($cmd);
+        if ($results['return'] != 0)
+            throw new CException($results['stderr']."\n".$results['stdout']);
+
+        // write results to log file for testing
+        file_put_contents("protected/runtime/weasy.log", print_r($results, true),FILE_APPEND | LOCK_EX );
+
+        if (file_exists($pdfFile))
+        {
+            self::streamPdf($pdfFile, "SubnauticaNotes.pdf");
+            unlink($pdfFile);
+        }
+
+        unlink($htmlFile);
+    }
+
+    // Uncomment the following methods and override them if needed
+	/*
+	public function filters()
+	{
+		// return the filter configuration for this controller, e.g.:
+		return array(
+			'inlineFilterName',
+			array(
+				'class'=>'path.to.FilterClass',
+				'propertyName'=>'propertyValue',
+			),
+		);
+	}
+
+	public function actions()
+	{
+		// return external action classes, e.g.:
+		return array(
+			'action1'=>'path.to.ActionClass',
+			'action2'=>array(
+				'class'=>'path.to.AnotherActionClass',
+				'propertyName'=>'propertyValue',
+			),
+		);
+	}
+	*/
+
+}
