@@ -115,6 +115,7 @@ EOL;
 
     public function sendPDF($html)
     {
+        $html = str_replace('/images','images', $html);
         $runtime = dirname(__DIR__).DIRECTORY_SEPARATOR."runtime";
         $pdfFile = tempnam($runtime, "pdf");
         $htmlFile = tempnam($runtime, "html");

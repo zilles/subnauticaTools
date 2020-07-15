@@ -22,9 +22,18 @@ class SubImage implements DelimiterProcessorInterface {
                 $array = json_decode($json);
                 foreach($array as $a)
                 {
-                    list($name,$code, $src) = $a;
-                    self::$_cache[strtolower($name)] = $src;
-                    self::$_cache[strtolower($code)] = $src;
+                    $obj = (object) $a;
+                    if (isset($obj->code))
+                    {
+                        $src = "/images/$obj->code.png";
+                        self::$_cache[strtolower($obj->code)] = $src;
+                    }
+                    else $src = "/images/$obj->num.png";
+
+                    if (isset($obj->num))
+                        self::$_cache[strtolower($obj->num)] = $src;
+
+                    self::$_cache[strtolower($obj->name)] = $src;
                 }
             }
         }
@@ -96,7 +105,6 @@ class SubImage implements DelimiterProcessorInterface {
         }
         else
         {
-            $src = preg_replace('/latest.*/', 'latest', $src);
             for ($i=0; $i<$count; $i++)
             {
                 // Create the outer element
