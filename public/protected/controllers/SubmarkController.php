@@ -9,13 +9,12 @@ class SubmarkController extends Controller
     public function defaultSource()
     {
         return <<<EOL
-Glitchless Any% survival
-----
+#### Glitchless Any% Survival
 
 * Make **scanner** {copper} {titanium} {acidmushroom:2}
 * Make a seaglide, knife and std tank.  
   {copper:3} {titanium:5} {creepvineseedcluster:2} {acidmushroom:2}
-* *Profit* {Gold:2}
+* *Profit* {Purple Tablet:3}
 
 |Step|Result|
 |-|-|
@@ -169,4 +168,18 @@ EOL;
 	}
 	*/
 
+    public function actionHelp()
+    {
+        $dir = dirname(__FILE__,2);
+        $json = file_get_contents("$dir/data/image.json");
+        $array = json_decode($json);
+        usort($array, function($a, $b) {
+            $numa = CHtml::value($a,"num", 10000);
+            $numb = CHtml::value($b,"num", 10000);
+            return $numa-$numb;
+        });
+        $this->render("help", [
+            "array"=>$array,
+        ]);
+    }
 }

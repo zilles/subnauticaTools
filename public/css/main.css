@@ -3,7 +3,7 @@ body
 	margin: 0;
 	padding: 0;
 	color: #555;
-	font: normal 10pt Arial,Helvetica,sans-serif;
+	font: normal 12pt Arial,Helvetica,sans-serif;
 	background: #EFEFEF;
 }
 
@@ -248,4 +248,23 @@ div.search-form
 #submark img {
 	vertical-align: top;
 	height: 40px;
+}
+
+#submark .helplist img {
+	height: 60px;
+}
+#submark .helplist {
+	width: auto;
+}
+
+#helplink {
+	font-size: 80%;
+}
+
+#helplink:before {
+	content: '[';
+}
+
+#helplink:after {
+	  content: ']';
 }

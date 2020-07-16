@@ -23,16 +23,11 @@ class SubImage implements DelimiterProcessorInterface {
                 foreach($array as $a)
                 {
                     $obj = (object) $a;
+                    $src = SubTools::imagePathFromObject($a);
                     if (isset($obj->code))
-                    {
-                        $src = "/images/$obj->code.png";
                         self::$_cache[strtolower($obj->code)] = $src;
-                    }
-                    else $src = "/images/$obj->num.png";
-
                     if (isset($obj->num))
                         self::$_cache[strtolower($obj->num)] = $src;
-
                     self::$_cache[strtolower($obj->name)] = $src;
                 }
             }
