@@ -8,6 +8,7 @@ $this->breadcrumbs=array(
 <h1>Subnautica Note Maker <?php echo CHtml::link("Help Screen", ["help"],["id"=>"helplink","target"=>"_blank"])?></h1>
 <div class="clearfix">
     <div class="half1">
+        Your source text:
         <form method="post">
             <?php echo CHtml::textArea("source", $source, ["cols"=>60, "rows"=>30]);?>
             <?php echo CHtml::submitButton("Preview"); ?>
@@ -15,6 +16,7 @@ $this->breadcrumbs=array(
         </form>
     </div>
     <div class="half2">
+        Preview:
         <div id="submark">
             <?php echo $html;?>
         </div>
