@@ -7,33 +7,6 @@ use League\CommonMark\Inline\Element\Image;
 use League\CommonMark\Inline\Element\Text;
 
 class SubImage implements DelimiterProcessorInterface {
-    public static $_cache = null;
-
-    public function getMap()
-    {
-        if (self::$_cache === null)
-        {
-            self::$_cache = [];
-
-            $dir = dirname(__FILE__,2);
-            $json = file_get_contents("$dir/data/image.json");
-            if ($json)
-            {
-                $array = json_decode($json);
-                foreach($array as $a)
-                {
-                    $obj = (object) $a;
-                    $src = SubTools::imagePathFromObject($a);
-                    if (isset($obj->code))
-                        self::$_cache[strtolower($obj->code)] = $src;
-                    if (isset($obj->num))
-                        self::$_cache[strtolower($obj->num)] = $src;
-                    self::$_cache[strtolower($obj->name)] = $src;
-                }
-            }
-        }
-        return self::$_cache;
-    }
     public function getOpeningCharacter():string
     {
         return "{";
@@ -88,23 +61,21 @@ class SubImage implements DelimiterProcessorInterface {
             $count = $split[1];
         }
 
-        $map = $this->getMap();
-        $src = CHtml::value($map,strtolower($reference));
+        $map = SubTools::getMap();
+        $obj = CHtml::value($map,strtolower($reference));
 
-//        $src = "https://vignette.wikia.nocookie.net/subnautica/images/7/78/Copper_Ore.png/revision/latest";
-
-        if (!$src)
+        if (!$obj)
         {
             $image = new Text("[Can't find $reference]");
             $closer->insertAfter($image);
         }
         else
         {
+            $obj = (object)$obj;
             for ($i=0; $i<$count; $i++)
             {
                 // Create the outer element
-                if ($src)
-                    $image = new Image($src, $reference, $reference);
+                $image = new Image($obj->src, $obj->name, $obj->name);
 
                 // Place the outer element into the AST
                 $closer->insertAfter($image);

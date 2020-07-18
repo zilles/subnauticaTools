@@ -70,7 +70,7 @@
             ?>
             <tr>
                 <td><?php echo CHtml::image(SubTools::imagePathFromObject($obj),$o->name)?></td>
-                <td><?php echo CHtml::value($o,"num");?></td>
+                <td><?php echo CHtml::value($o,"num")/*." ".$o->width." ".$o->height*/;?></td>
                 <td><?php echo $o->name?></td>
                 <td><?php echo CHtml::value($o,"code")?></td>
             </tr>

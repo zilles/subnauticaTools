@@ -170,9 +170,7 @@ EOL;
 
     public function actionHelp()
     {
-        $dir = dirname(__FILE__,2);
-        $json = file_get_contents("$dir/data/image.json");
-        $array = json_decode($json);
+        $array = SubTools::loadImageData();
         usort($array, function($a, $b) {
             $numa = CHtml::value($a,"num", 10000);
             $numb = CHtml::value($b,"num", 10000);
@@ -182,4 +180,15 @@ EOL;
             "array"=>$array,
         ]);
     }
+
+    public function actionTest()
+    {
+        $test = "tank,seaglide,scrapmetal:3,quartz:2,titanium:12,cave sulfur,battery,knife,scanner,builder,firstaidkit,table coral";
+        $html =  SubTools::inventory(6,8,$test);
+        $this->render("test",[
+            "src"=>$test,
+            "html"=>$html,
+        ]);
+    }
+
 }
