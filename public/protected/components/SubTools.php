@@ -13,7 +13,7 @@ class SubTools {
         "radiationgloves"=>["width"=>2,"height"=>2],
         "reinforceddivesuit"=>["width"=>2,"height"=>2],
         "reinforcedgloves"=>["width"=>2,"height"=>2],
-        "creaturedecoy"=>["width"=>1,"height"=>2],
+        "cyclopsdecoy"=>["width"=>1,"height"=>2],
         "constructor"=>["width"=>3,"height"=>3],
         "stasisrifle"=>["width"=>2,"height"=>2],
         "gravsphere"=>["width"=>2,"height"=>2],
