@@ -233,6 +233,31 @@ class SubTools {
         return true;
     }
 
+    public static function emptyRow($row)
+    {
+        foreach($row as $cell)
+            if ($cell !== true)
+                return false;
+        return true;
+    }
+
+    public static function countConsecutiveEmptyRows($grid, $y)
+    {
+        $count = 0;
+        $height = count($grid);
+
+        while($y<$height)
+        {
+            if (self::emptyRow($grid[$y]))
+                $count++;
+            else break;
+            $y++;
+        }
+
+        return $count;
+    }
+
+
     public static function htmlForGrid($grid)
     {
         $html="";
@@ -241,6 +266,11 @@ class SubTools {
         $html.=CHtml::openTag("table",["class"=>"inventory"]);
         for ($y=0; $y<$height; $y++)
         {
+            // Fix for ios browsers that can't handle empty rows
+            if (self::emptyRow($grid[$y]))
+                continue;
+            $adjust = self::countConsecutiveEmptyRows($grid, $y+1);
+
             $html.=CHtml::openTag("tr");
             for ($x=0; $x<$width; $x++) {
                 $obj = $grid[$y][$x];
@@ -254,7 +284,7 @@ class SubTools {
                     if ($obj->height>1)
                         $class.=" hgt".$obj->height;
                     $img = CHtml::image($obj->src, $obj->name, ["class"=>$class]);
-                    $html.= CHtml::tag("td",["colspan"=>$obj->width, "rowspan"=>$obj->height], $img);
+                    $html.= CHtml::tag("td",["colspan"=>$obj->width, "rowspan"=>$obj->height-$adjust], $img);
                 }
             }
             $html.=CHtml::closeTag("tr");
