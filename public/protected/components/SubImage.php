@@ -53,33 +53,90 @@ class SubImage implements DelimiterProcessorInterface {
             $tmp->setContent("");
             $tmp = $next;
         }
+        $reference = trim($reference);
 
-        $split = explode(":",$reference);
-        if (count($split) == 2)
+        $locker = $this->checkForLocker($reference);
+
+        if ($locker == null)
         {
-            $reference = $split[0];
-            $count = $split[1];
-        }
+            $split = explode(":",$reference);
+            if (count($split) == 2)
+            {
+                $reference = $split[0];
+                $count = $split[1];
+            }
 
-        $map = SubTools::getMap();
-        $obj = CHtml::value($map,strtolower($reference));
+            $map = SubTools::getMap();
+            $obj = CHtml::value($map,strtolower($reference));
 
-        if (!$obj)
-        {
-            $image = new Text("[Can't find $reference]");
-            $closer->insertAfter($image);
+            if (!$obj)
+            {
+                $image = new Text("[Can't find $reference]");
+                $closer->insertAfter($image);
+            }
+            else
+            {
+                $obj = (object)$obj;
+                for ($i=0; $i<$count; $i++)
+                {
+                    // Create the outer element
+                    $image = new Image($obj->src, $obj->name, $obj->name);
+
+                    // Place the outer element into the AST
+                    $closer->insertAfter($image);
+                }
+            }
         }
         else
         {
-            $obj = (object)$obj;
-            for ($i=0; $i<$count; $i++)
-            {
-                // Create the outer element
-                $image = new Image($obj->src, $obj->name, $obj->name);
-
-                // Place the outer element into the AST
-                $closer->insertAfter($image);
-            }
+            $htmlDump = new HtmlDump($locker);
+            $closer->insertAfter($htmlDump);
         }
+    }
+
+    public function checkForLocker($reference)
+    {
+        $lockerMarkers = [
+            "locker"=>[6,8],
+            "inventory"=>[6,8],
+            "wall"=>[5,6],
+            "waterproof"=>[4,4],
+        ];
+
+        if (preg_match('/^grid(-[^:]+)?:/', $reference, $matches))
+        {
+            $width = 6;
+            $height = 8;
+
+            if (isset($matches[1]))
+            {
+                $type = substr($matches[1],1);
+
+                // look for 4x4
+                if (preg_match('/^(\d+)x(\d+)$/', $type, $numbers))
+                {
+                    $width = $numbers[1];
+                    $height = $numbers[2];
+                    if ($width>10 || $height>10)
+                        return "[size out of bounds]";
+                }
+                else
+                {
+                    $found = false;
+                    foreach ($lockerMarkers as $name => $size) {
+                        if ($type == $name) {
+                            list($width, $height) = $size;
+                            $found = true;
+                        }
+                    }
+                    if (!$found)
+                        return "[Don't know $type.  Try locker, walllocker, waterprooflocker, or 4x4]";
+                }
+            }
+            $items = substr($reference, strlen($matches[0]));
+            return SubTools::inventory($width, $height, $items);
+        }
+
+        return null;
     }
 }

@@ -2,6 +2,7 @@
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extension\Table\TableExtension;
+use League\CommonMark\Block\Element\Paragraph;
 
 class SubmarkController extends Controller
 {
@@ -20,6 +21,9 @@ class SubmarkController extends Controller
 |-|-|
 |Get fruit {creepvineseedcluster}|Make Lube {lubricant}| 
 |Get tooth {stalkertooth}|Make Enamel {enameledglass}| 
+
+Loadout:  
+{grid:seaglide,doubletank,quartz:2,titanium:12,cave sulfur,battery,knife,scanner,builder,firstaidkit,table coral,scrapmetal:3}
 EOL;
     }
 
@@ -38,6 +42,9 @@ EOL;
             // Add this extension
             $environment->addExtension(new TableExtension());
             $environment->addDelimiterProcessor(new SubImage());
+            $environment->addInlineRenderer(HtmlDump::class, new HtmlDumpRenderer(), 0);
+
+            $environment->addBlockRenderer(Paragraph::class,     new ParagraphOverrideRenderer(),     0);
 
             $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false], $environment);
             $html = $converter->convertToHtml($source);

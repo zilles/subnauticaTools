@@ -38,7 +38,29 @@
     <p>
         You can also append a suffix after the image identifier to produce multiple of the same image.  So {scrapmetal:3} will show 3 images of scrap metal.
     </p>
-    <h3>Planned Features (please request new features if you think so something)</h3>
+    <p>
+        In addition you can now specify inventory grids that you can fill with items.  You can start a grid in a couple different ways:
+    </p>
+<ul>
+    <li>
+        <pre>{grid:</pre>  Start a 6x8 grid
+    </li>
+    <li>
+        <pre>{grid-wall:</pre>  Start a 5x6 grid
+    </li>
+    <li>
+        <pre>{grid-waterproof:</pre>  Start a 4x4 grid
+    </li>
+    <li>
+        <pre>{grid-5x7:</pre>  Start a 5x7 grid (or whatever size you want)
+    </li>
+</ul>
+<p>
+    After the prefix you give a comma delimited list of items (with optional quantities), e.g.
+
+    {grid:seaglide,doubletank,quartz:2,titanium:12,cave sulfur,battery,knife,scanner,builder,firstaidkit,table coral,scrapmetal:3}
+</p>
+<h3>Planned Features (please request new features if you think so something)</h3>
     <ul>
         <li>
             Preview auto updates
@@ -50,7 +72,7 @@
             Save your document to the site with a custom URL
         </li>
         <li>
-            Add an extension to allow you to graphically fill a locker by specifying it's contents
+            <b>Done!</b> Add an extension to allow you to graphically fill a locker by specifying it's contents
         </li>
     </ul>
     <h3>Image Identifiers</h3>
