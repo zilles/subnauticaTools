@@ -241,12 +241,13 @@ class SubTools {
         return true;
     }
 
-    public static function countConsecutiveEmptyRows($grid, $y)
+    public static function countConsecutiveEmptyRows($grid, $y, $num)
     {
         $count = 0;
         $height = count($grid);
+        $end = min($y+$num, $height);
 
-        while($y<$height)
+        while($y<$end)
         {
             if (self::emptyRow($grid[$y]))
                 $count++;
@@ -269,7 +270,6 @@ class SubTools {
             // Fix for ios browsers that can't handle empty rows
             if (self::emptyRow($grid[$y]))
                 continue;
-            $adjust = self::countConsecutiveEmptyRows($grid, $y+1);
 
             $html.=CHtml::openTag("tr");
             for ($x=0; $x<$width; $x++) {
@@ -278,6 +278,7 @@ class SubTools {
                     $html.=CHtml::tag("td",[],CHtml::tag("div",["class"=>"empty"]));
                 else if ($obj!==true)
                 {
+                    $adjust = self::countConsecutiveEmptyRows($grid, $y+1, $obj->height-1);
                     $class = "";
                     if ($obj->width>1)
                         $class="wid".$obj->width;
