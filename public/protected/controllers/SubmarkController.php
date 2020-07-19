@@ -24,6 +24,7 @@ class SubmarkController extends Controller
 
 Loadout:  
 {grid:seaglide,doubletank,quartz:2,titanium:12,cave sulfur,battery,knife,scanner,builder,firstaidkit,table coral,scrapmetal:3}
+{grid:seaglide,doubletank,scanner,knife,builder,lasercutter,gold:3,crystalline sulfur:4,aerogel:2,lithium:14,purple tablet,kyanite:4,nickel:3}
 EOL;
     }
 
