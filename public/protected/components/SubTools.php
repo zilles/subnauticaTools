@@ -251,7 +251,6 @@ class SubTools {
         {
             if (self::emptyRow($grid[$y]))
                 $count++;
-            else break;
             $y++;
         }
 
