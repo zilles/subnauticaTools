@@ -1,4 +1,11 @@
 <?php /* @var $this Controller */ ?>
+<?php
+
+$css = dirname(__DIR__,3).DIRECTORY_SEPARATOR."css";
+$style_mod = filemtime($css.DIRECTORY_SEPARATOR."main.css");
+?>
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,7 +19,7 @@
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/ie.css" media="screen, projection">
 	<![endif]-->
 
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css">
+	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css?<?php echo $style_mod?>">
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css">
 
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
