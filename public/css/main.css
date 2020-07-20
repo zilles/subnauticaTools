@@ -242,16 +242,16 @@ div.search-form
 #source { width: 95%;}
 
 #submark  {
-    font-size: 35px;
+    font-size: 25px;
 }
 
 #submark img {
 	vertical-align: top;
-	height: 40px;
+	height: 30px;
 }
 
 #submark .helplist img {
-	height: 60px;
+	height: 50px;
 }
 #submark .helplist {
 	width: auto;
@@ -279,8 +279,8 @@ div.search-form
 }
 
 #submark .inventory img, .inventory .empty {
-	width: 40px;
-	height: 40px;
+	width: 30px;
+	height: 30px;
     display: block;
 }
 #submark .inventory td {
@@ -290,16 +290,16 @@ div.search-form
 }
 
 #submark .inventory .hgt2 {
-	height: 83px;
+	height: 63px;
 }
 #submark .inventory .hgt3 {
-	height: 126px;
+	height: 96px;
 }
 #submark .inventory .wid2 {
-	width: 83px;
+	width: 63px;
 }
 #submark .inventory .wid3 {
-	width: 126px;
+	width: 96px;
 }
 
 .paragraph {
