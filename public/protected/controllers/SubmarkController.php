@@ -7,6 +7,26 @@ use League\CommonMark\Block\Element\Paragraph;
 class SubmarkController extends Controller
 {
 
+    public function convertMarkdown($source)
+    {
+        spl_autoload_unregister(array('YiiBase','autoload'));
+        require Yii::getPathOfAlias('application.vendor').DIRECTORY_SEPARATOR.'autoload.php';
+        spl_autoload_register(array('YiiBase','autoload'));
+        // Obtain a pre-configured Environment with all the CommonMark parsers/renderers ready-to-go
+        $environment = Environment::createCommonMarkEnvironment();
+        // Add this extension
+        $environment->addExtension(new TableExtension());
+        $environment->addDelimiterProcessor(new SubImage());
+        $environment->addInlineRenderer(HtmlDump::class, new HtmlDumpRenderer(), 0);
+
+        $environment->addBlockRenderer(Paragraph::class,     new ParagraphOverrideRenderer(),     0);
+
+        $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false], $environment);
+        $html = $converter->convertToHtml($source);
+
+        return $html;
+    }
+
     public function defaultSource()
     {
         return <<<EOL
@@ -35,20 +55,7 @@ EOL;
 
 	    if ($source)
         {
-            spl_autoload_unregister(array('YiiBase','autoload'));
-            require Yii::getPathOfAlias('application.vendor').DIRECTORY_SEPARATOR.'autoload.php';
-            spl_autoload_register(array('YiiBase','autoload'));
-            // Obtain a pre-configured Environment with all the CommonMark parsers/renderers ready-to-go
-            $environment = Environment::createCommonMarkEnvironment();
-            // Add this extension
-            $environment->addExtension(new TableExtension());
-            $environment->addDelimiterProcessor(new SubImage());
-            $environment->addInlineRenderer(HtmlDump::class, new HtmlDumpRenderer(), 0);
-
-            $environment->addBlockRenderer(Paragraph::class,     new ParagraphOverrideRenderer(),     0);
-
-            $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false], $environment);
-            $html = $converter->convertToHtml($source);
+            $html = $this->convertMarkdown($source);
 
             if (isset($_POST["pdf"]))
             {
@@ -199,4 +206,12 @@ EOL;
         ]);
     }
 
+
+    public function actionMarkdown()
+    {
+        $source = CHtml::value($_POST, "source","");
+        $html = $this->convertMarkdown($source);
+        echo $html;
+        return false;
+    }
 }
