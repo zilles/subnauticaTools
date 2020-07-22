@@ -63,10 +63,10 @@
 <h3>Planned Features (please request new features if you think so something)</h3>
     <ul>
         <li>
-            Preview auto updates
+            <b>Done!</b> Preview auto updates
         </li>
         <li>
-            Download result as image
+            Download result as image.  (With optional dark bg)
         </li>
         <li>
             Save your document to the site with a custom URL
