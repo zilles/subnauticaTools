@@ -5,7 +5,6 @@ $css = dirname(__DIR__,3).DIRECTORY_SEPARATOR."css";
 $style_mod = filemtime($css.DIRECTORY_SEPARATOR."main.css");
 ?>
 
-?>
 <!DOCTYPE html>
 <html>
 <head>
