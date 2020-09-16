@@ -62,7 +62,7 @@ EOL;
                 $htmlWithShell = $this->renderPartial('pdf', [
                     'html'=>$html,
                 ], true);
-                $this->sendPDF($htmlWithShell);
+                $this->sendPDF($htmlWithShell, true);
                 exit;
             }
         }
@@ -117,17 +117,17 @@ EOL;
         return array('stdout'=>'', 'stderr'=>'', 'return'=>-1 );
     }
 
-    public static function streamPdf($file, $name, $attachment = true)
+    public static function streamFile($file, $name, $attachment = true, $content_type = 'application/pdf')
     {
         $type = $attachment? "attachment" : "inline";
         header('Pragma:');
         header('Cache-Control: private,no-cache');
-        header('Content-Type: application/pdf');
+        header("Content-Type: $content_type");
         header('Content-Disposition: '.$type.'; filename="'.str_replace('"','\\"',$name).'"');
         readfile($file);
     }
 
-    public function sendPDF($html)
+    public function sendPDF($html, $png = false)
     {
         $html = str_replace('/images','images', $html);
         $runtime = dirname(__DIR__).DIRECTORY_SEPARATOR."runtime";
@@ -139,7 +139,8 @@ EOL;
 
         // Get a file path to the public directory
         $weasyprint = CHtml::value(Yii::app()->params,"weasyprint","weasyprint");
-        $cmd = "$weasyprint -u $baseurl -e utf8 -f pdf -v $htmlFile $pdfFile";
+        $format = $png ? "png -r 192" : "pdf";
+        $cmd = "$weasyprint -u $baseurl -e utf8 -f $format -v $htmlFile $pdfFile";
         $results = self::my_exec($cmd);
         if ($results['return'] != 0)
             throw new CException($results['stderr']."\n".$results['stdout']);
@@ -149,7 +150,9 @@ EOL;
 
         if (file_exists($pdfFile))
         {
-            self::streamPdf($pdfFile, "SubnauticaNotes.pdf");
+            $mime = $png ? "image/png" : "application/pdf";
+            $name = "SubnauticaNotes.".($png? "png":"pdf");
+            self::streamFile($pdfFile, $name, true, $mime);
             unlink($pdfFile);
         }
 
