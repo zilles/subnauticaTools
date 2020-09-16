@@ -38,7 +38,7 @@ $style_mod = filemtime($css.DIRECTORY_SEPARATOR."main.css");
 				array('label'=>'Home', 'url'=>array('/site/index')),
 //				array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
                 array('label'=>'Subnautica Note Maker', 'url'=>array('/submark')),
-                array('label'=>'Graph Category', 'url'=>array('/graphCat')),
+                array('label'=>'Category History', 'url'=>array('/site/categoryHistory')),
 //				array('label'=>'Contact', 'url'=>array('/site/contact')),
 				/*
 				array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
