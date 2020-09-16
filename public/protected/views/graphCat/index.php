@@ -83,6 +83,7 @@
                         if (len == 0 || wr)
                             point.dataLabels= {
                                 enabled: true,
+                                allowOverlap: true,
                                 align: 'left',
                                 style: {
                                     fontWeight: 'bold',
