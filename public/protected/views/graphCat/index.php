@@ -23,9 +23,9 @@
              {{run.players.data[0].names.international}} on {{run.date}} got {{run.times.realtime}}
         </li>
     </ul-->
-    <pre v-for="run in runs" v-if="runMatches(run,variables) && run.players.data[0].names.international=='salvner'">
+    <!--pre v-for="run in runs" v-if="runMatches(run,variables) && run.players.data[0].names.international=='salvner'">
     {{ run }}
-    </pre>
+    </pre-->
 
 </div>
 <script>
@@ -104,13 +104,10 @@
                 });
                 name+=" "+vars.join(" ");
                 makeChart(name, series);
-                console.log(vars, series);
+                //console.log(vars, series);
             }
         },
         watch: {
-            variables: function(val) {
-                console.log("variables",val);
-            },
             category: function(val) {
                 if (val)
                 {
@@ -162,7 +159,7 @@
     Promise.all(catPromises)
         .then(function (response) {
             // handle success
-            console.log(response);
+            //console.log(response);
             let combined = response[0].data.data.concat(response[1].data.data);
             app.categories = combined;
             app.category = combined[0].id;
