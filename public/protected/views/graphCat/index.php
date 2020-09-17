@@ -4,6 +4,7 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
 <div id="app">
+    <a id="leaderboard_link" target="_blank" :href="cat.weblink" v-if="cat">{{cat.name}} Leaderboard</a>
     <select v-model="category">
         <option v-for="cat in categories" :key="cat.id" v-bind:value="cat.id">
             {{cat.name}}
@@ -23,11 +24,21 @@
              {{run.players.data[0].names.international}} on {{run.date}} got {{run.times.realtime}}
         </li>
     </ul-->
+    <pre>
+
+    {{ categories[0] }}
+    </pre>
     <!--pre v-for="run in runs" v-if="runMatches(run,variables) && run.players.data[0].names.international=='salvner'">
-    {{ run }}
     </pre-->
 
 </div>
+<style>
+    #leaderboard_link {
+        float:right;
+        font-size: 80%;
+        color: gray;
+    }
+</style>
 <script>
     var game = ['9dom836p','76rx0ze6'];
 
@@ -38,6 +49,11 @@
             categories: [],
             variables: [],
             runs: [],
+        },
+        computed: {
+            cat: function() {
+                return _.find(this.categories, {id:this.category});
+            }
         },
         methods: {
             runMatches: function(run,variables) {
