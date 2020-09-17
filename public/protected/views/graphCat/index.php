@@ -24,11 +24,8 @@
              {{run.players.data[0].names.international}} on {{run.date}} got {{run.times.realtime}}
         </li>
     </ul-->
-    <pre>
-
-    {{ categories[0] }}
-    </pre>
     <!--pre v-for="run in runs" v-if="runMatches(run,variables) && run.players.data[0].names.international=='salvner'">
+    {{ categories[0] }}
     </pre-->
 
 </div>
