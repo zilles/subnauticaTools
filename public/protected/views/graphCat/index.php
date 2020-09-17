@@ -171,9 +171,17 @@
         });
 
     function makeChart(name, series) {
+
+        series.unshift({ name: 'Show/Hide all',  marker: { enabled:false}});
+
         var myChart = Highcharts.chart('container', {
             chart: {
-                type: 'spline'
+                type: 'spline',
+                events: {
+                    load: function() {
+                        this.showHideFlag = true;
+                    }
+                }
             },
             title: {
                 text: name+' History'
@@ -198,19 +206,44 @@
             },
             tooltip: {
                 style: {
-                    pointerEvents: 'auto'
+                    pointerEvents: 'auto',
+                    'width': '500%',
+                    whiteSpace: 'normal'
                 },
 
  //               stickOnContact: true,
                 headerFormat: '<b>{series.name} - {point.x:%b %e, %Y} ({point.y:%k:%M:%S})</b><br>',
-                pointFormat: '{point.custom.comment}<br/><a target="_blank" href="{point.custom.video}">{point.custom.video}</a>'
+                pointFormat: '{point.custom.comment}<br/><a href="{point.custom.video}">{point.custom.video}</a>'
             },
             plotOptions: {
                 series: {
                     marker: {
                         enabled: true
+                    },
+                    events: {
+                        legendItemClick() {
+                            let chart = this.chart,
+                                series = chart.series;
+                            if (this.index === 0) {
+                                console.log(chart.showHideFlag);
+                                if (chart.showHideFlag) {
+                                    series.forEach(series => {
+                                        series.setVisible(false, false);
+                                    })
+                                } else {
+                                    series.forEach(series => {
+                                        series.setVisible(true, false);
+                                    })
+                                }
+                                chart.redraw();
+                                console.log("done");
+                                chart.showHideFlag = !chart.showHideFlag;
+                                return false;
+                            }
+                            return true;
+                        },
                     }
-                }
+                },
             },
             // Define the data points. All series have a dummy year
             // of 1970/71 in order to be compared on the same x axis. Note
