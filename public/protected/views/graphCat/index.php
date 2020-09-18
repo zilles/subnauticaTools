@@ -18,7 +18,7 @@
             </option>
         </select>
     </span>
-    <div id="container" style="width:100%; height:55vw;"></div>
+    <div id="container" style="width:100%; height:100%;"></div>
     <!--ul>
         <li v-for="run in runs" v-if="runMatches(run,variables)">
              {{run.players.data[0].names.international}} on {{run.date}} got {{run.times.realtime}}
@@ -30,6 +30,11 @@
 
 </div>
 <style>
+    html, body, .container, #app {
+        height: 100%;
+        margin:0;
+    }
+    #content { height: 90% }
     #leaderboard_link {
         float:right;
         font-size: 80%;
@@ -278,8 +283,15 @@
     }
 
     // disable page dragging on mobile
+    /*
     function preventBehavior(e) {
         e.preventDefault();
     };
     document.addEventListener("touchmove", preventBehavior, {passive: false});
+     */
+
+    function sizeGraph()
+    {
+
+    }
 </script>
