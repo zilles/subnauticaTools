@@ -18,7 +18,7 @@
             </option>
         </select>
     </span>
-    <div id="container" style="width:100%; height:50vw;"></div>
+    <div id="container" style="width:100%; height:55vw;"></div>
     <!--ul>
         <li v-for="run in runs" v-if="runMatches(run,variables)">
              {{run.players.data[0].names.international}} on {{run.date}} got {{run.times.realtime}}
@@ -220,6 +220,10 @@
                     }
                 }
             },
+            rangeSelector: {
+                enabled: true,
+                verticalAlign: 'top',
+            },
             tooltip: {
                 style: {
                     pointerEvents: 'auto',
@@ -248,7 +252,6 @@
                             let chart = this.chart,
                                 series = chart.series;
                             if (this.index === 0) {
-                                console.log(chart.showHideFlag);
                                 if (chart.showHideFlag) {
                                     series.forEach(series => {
                                         series.setVisible(false, false);
@@ -259,7 +262,6 @@
                                     })
                                 }
                                 chart.redraw();
-                                console.log("done");
                                 chart.showHideFlag = !chart.showHideFlag;
                                 return false;
                             }
