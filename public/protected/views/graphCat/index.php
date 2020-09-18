@@ -76,7 +76,11 @@
 
                         // Create series if it doesn't exist
                         if (!_.has(seriesMap,player.id))
-                            seriesMap[player.id] = {name: player_name, data:[]};
+                            seriesMap[player.id] = {
+                                name: player_name,
+                                data:[],
+                                step: "left"
+                            };
 
                         let len = seriesMap[player.id].data.length;
                         let video = "";
@@ -179,7 +183,7 @@
 
         var myChart = Highcharts.chart('container', {
             chart: {
-                type: 'spline',
+                type: 'line',
                 events: {
                     load: function() {
                         this.showHideFlag = true;
@@ -210,6 +214,7 @@
             navigator: {
                 enabled: true,
                 series: {
+                    type: 'line',
                     dataLabels: {
                         enabled: false
                     }
