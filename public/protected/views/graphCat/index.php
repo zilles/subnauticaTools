@@ -1,7 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
 
 <div id="app">
     <a id="leaderboard_link" target="_blank" :href="cat.weblink" v-if="cat">{{cat.name}} Leaderboard</a>
@@ -95,7 +95,6 @@
                         };
                         if (len == 0 || wr)
                             point.dataLabels= {
-                                enabled: true,
                                 allowOverlap: true,
                                 align: 'left',
                                 style: {
@@ -217,6 +216,14 @@
                     text: 'Run Time'
                 },
             },
+            navigator: {
+                enabled: true,
+                series: {
+                    dataLabels: {
+                        enabled: false
+                    }
+                }
+            },
             tooltip: {
                 style: {
                     pointerEvents: 'auto',
@@ -230,6 +237,11 @@
             },
             plotOptions: {
                 series: {
+                    showInNavigator: true,
+                    dataLabels: {
+                        enabled: true,
+                        format:""
+                    },
                     marker: {
                         enabled: true
                     },
