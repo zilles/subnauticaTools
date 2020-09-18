@@ -274,4 +274,10 @@
             series: series,
         });
     }
+
+    // disable page dragging on mobile
+    function preventBehavior(e) {
+        e.preventDefault();
+    };
+    document.addEventListener("touchmove", preventBehavior, {passive: false});
 </script>
