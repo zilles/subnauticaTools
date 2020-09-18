@@ -95,16 +95,7 @@
                         };
                         if (len == 0 || wr)
                             point.dataLabels= {
-                                allowOverlap: true,
-                                align: 'left',
-                                style: {
-                                    fontWeight: 'bold',
-                                },
-                                x: 3,
                                 format: (len==0?player_name+" ":"")+(wr?"WR":""),
-                                verticalAlign: 'middle',
-                                overflow: true,
-                                crop: false
                             };
                         if (len==0 || value < seriesMap[player.id].data[len-1].y)
                             seriesMap[player.id].data.push(point);
@@ -240,7 +231,9 @@
                     showInNavigator: true,
                     dataLabels: {
                         enabled: true,
-                        format:""
+                        format:"",
+                        position: "center",
+                        allowOverlap: true,
                     },
                     marker: {
                         enabled: true
