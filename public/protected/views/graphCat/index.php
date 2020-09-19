@@ -285,7 +285,10 @@
     }
     function sizeGraph()
     {
-        document.getElementById("container").style.height = (window.innerHeight - 150) + "px";
+        let height = (window.innerHeight - 150);
+        if (height < 500)
+            height = 500;
+        document.getElementById("container").style.height = height + "px";
     }
     sizeGraph();
     window.onresize = function() {
