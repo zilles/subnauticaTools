@@ -1,5 +1,9 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<?php if (yiiparam("debug")) { ?>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<?php } else {?>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+<?php } ?>
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 
@@ -18,23 +22,15 @@
             </option>
         </select>
     </span>
-    <div id="container" style="width:100%; height:100%;"></div>
-    <!--ul>
-        <li v-for="run in runs" v-if="runMatches(run,variables)">
-             {{run.players.data[0].names.international}} on {{run.date}} got {{run.times.realtime}}
-        </li>
-    </ul-->
-    <!--pre v-for="run in runs" v-if="runMatches(run,variables) && run.players.data[0].names.international=='salvner'">
-    {{ categories[0] }}
-    </pre-->
+    <div id="container" style="width:100%; height:50vw;"></div>
+    <?php if (yiiparam("debug")) { ?>
+    <pre v-for="run in runs" v-if="runMatches(run,variables) || run.players.data[0].names.international=='salvner'">
+    {{ run }}
+    </pre>
+    <?php } ?>
 
 </div>
 <style>
-    html, body, .container, #app {
-        height: 100%;
-        margin:0;
-    }
-    #content { height: 90% }
     #leaderboard_link {
         float:right;
         font-size: 80%;
@@ -64,6 +60,15 @@
                     return run.values[variable.id] === variable.selected;
                 });
             },
+            /*
+            inGameTime: function() {
+                if (this.cat.name == "Any%" && _.some(this.variables, function(v) {
+                        return v.values.values[v.selected].label == "Creative";
+                    }))
+                        return true;
+                return false;
+            },
+             */
             createGraph: function()
             {
                 let vm = this;
@@ -72,7 +77,7 @@
                 _.each(vm.runs, function(run) {
                     if (vm.runMatches(run, vm.variables))
                     {
-                        let value = run.times.realtime_t*1000;
+                        let value = run.times.primary_t*1000;
                         let player = run.players.data[0];
                         let player_name=player.names.international;
                         let wr = value < wrTime;
@@ -100,7 +105,7 @@
                         let point = {
                             x:new Date(run.status['verify-date']).getTime(),
                             y:value,
-                            custom: {video: video, comment: run.comment}
+                            custom: {video: video, comment: run.comment, wr: wr ? "WR" : ""}
                         };
                         if (len == 0 || wr)
                             point.dataLabels= {
@@ -111,7 +116,7 @@
                     }
                 });
                 let series = _.values(seriesMap);
-                let name = _.find(vm.categories, {id:vm.category}).name;
+                let name = vm.cat.name;
                 let vars = _.map(vm.variables, function(v) {
                     return v.values.values[v.selected].label;
                 });
@@ -237,7 +242,7 @@
                 },
 
  //               stickOnContact: true,
-                headerFormat: '<b>{series.name} - {point.x:%b %e, %Y} ({point.y:%k:%M:%S})</b><br>',
+                headerFormat: '<b>{series.name} - {point.x:%b %e, %Y} - ({point.y:%k:%M:%S}) {point.custom.wr}</b><br>',
                 pointFormat: '{point.custom.comment}<br/><a href="{point.custom.video}">{point.custom.video}</a>'
             },
             plotOptions: {
@@ -275,23 +280,15 @@
                     }
                 },
             },
-            // Define the data points. All series have a dummy year
-            // of 1970/71 in order to be compared on the same x axis. Note
-            // that in JavaScript, months start at 0 for January, 1 for February etc.
             series: series,
         });
     }
-
-    // disable page dragging on mobile
-    /*
-    function preventBehavior(e) {
-        e.preventDefault();
-    };
-    document.addEventListener("touchmove", preventBehavior, {passive: false});
-     */
-
     function sizeGraph()
     {
-
+        document.getElementById("container").style.height = (window.innerHeight - 150) + "px";
     }
+    sizeGraph();
+    window.onresize = function() {
+        sizeGraph();
+    };
 </script>

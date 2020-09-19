@@ -1,5 +1,8 @@
 <?php
 
+// Helper functions
+require_once dirname(__FILE__) . '/../components/helpers.php';
+
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
 return array(

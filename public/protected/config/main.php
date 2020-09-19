@@ -3,6 +3,9 @@
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 
+// Helper functions
+require_once dirname(__FILE__) . '/../components/helpers.php';
+
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 $config = array(
