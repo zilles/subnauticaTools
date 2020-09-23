@@ -254,6 +254,7 @@
                         position: "center",
                         allowOverlap: true,
                     },
+                    findNearestPointBy: "xy",
                     marker: {
                         enabled: true
                     },
