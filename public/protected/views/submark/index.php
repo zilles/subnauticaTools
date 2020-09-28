@@ -22,6 +22,7 @@ $this->breadcrumbs=array(
             <?php echo CHtml::textArea("source", $source, ["cols"=>60, "rows"=>30]);?>
             <?php //echo CHtml::submitButton("Preview"); ?>
             <?php echo CHtml::submitButton("Download PDF",["name"=>"pdf"]); ?>
+            <?php echo CHtml::submitButton("Download PNG Image",["name"=>"png"]); ?>
         </form>
     </div>
     <div class="half2">

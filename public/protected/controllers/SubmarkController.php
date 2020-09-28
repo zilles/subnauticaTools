@@ -57,12 +57,14 @@ EOL;
         {
             $html = $this->convertMarkdown($source);
 
-            if (isset($_POST["pdf"]))
+            $pdf = isset($_POST["pdf"]);
+            $png = isset($_POST["png"]);
+            if ($pdf || $png)
             {
                 $htmlWithShell = $this->renderPartial('pdf', [
                     'html'=>$html,
                 ], true);
-                $this->sendPDF($htmlWithShell, true);
+                $this->sendPDF($htmlWithShell, $png);
                 exit;
             }
         }
