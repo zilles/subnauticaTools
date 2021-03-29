@@ -103,7 +103,7 @@
                             })
                         }
                         let point = {
-                            x:new Date(run.status['verify-date']).getTime(),
+                            x:new Date(run.date).getTime(),
                             y:value,
                             custom: {video: video, comment: run.comment, wr: wr ? "WR" : ""}
                         };
@@ -131,7 +131,7 @@
                 {
                     let vm = this;
                     let getRuns = function(offset) {
-                        axios.get('https://www.speedrun.com/api/v1/runs?max=200&orderby=verify-date&embed=players&status=verified&category='+val+'&offset='+offset)
+                        axios.get('https://www.speedrun.com/api/v1/runs?max=200&orderby=date&embed=players&status=verified&category='+val+'&offset='+offset)
                             .then(function (response) {
                                 // handle success
                                 // if it still matches
