@@ -60,15 +60,6 @@
                     return run.values[variable.id] === variable.selected;
                 });
             },
-            /*
-            inGameTime: function() {
-                if (this.cat.name == "Any%" && _.some(this.variables, function(v) {
-                        return v.values.values[v.selected].label == "Creative";
-                    }))
-                        return true;
-                return false;
-            },
-             */
             createGraph: function()
             {
                 let vm = this;
@@ -105,7 +96,13 @@
                         let point = {
                             x:new Date(run.date).getTime(),
                             y:value,
-                            custom: {video: video, comment: run.comment, wr: wr ? "WR" : ""}
+                            events: {
+                                click: function(e) {
+                                    if (video)
+                                        window.open(video);
+                                }
+                            },
+                            custom: {video: video ? (video+"<br/>(click point to launch video)"):"", comment: run.comment, wr: wr ? "WR" : ""}
                         };
                         if (len == 0 || wr)
                             point.dataLabels= {
@@ -242,8 +239,8 @@
                 },
 
  //               stickOnContact: true,
-                headerFormat: '<b>{series.name} - {point.x:%b %e, %Y} - ({point.y:%k:%M:%S}) {point.custom.wr}</b><br>',
-                pointFormat: '{point.custom.comment}<br/><a href="{point.custom.video}">{point.custom.video}</a>'
+                headerFormat: '<b>{series.name} - {point.x:%b %e, %Y} - ({point.y:%k:%M:%S}) {point.custom.wr}</b><br/>',
+                pointFormat: '{point.custom.comment}<br/><br/>{point.custom.video}'
             },
             plotOptions: {
                 series: {
