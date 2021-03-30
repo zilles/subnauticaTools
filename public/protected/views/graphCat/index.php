@@ -101,15 +101,13 @@
                         }
 
                         let videotext = video? (video+"<br/>(click point to launch video)"):"";
-                        if (isTouchDevice())
-                            videotext = '<a href="'+video+'">'+video+'</a>';
 
                         let point = {
                             x:new Date(run.date).getTime(),
                             y:value,
                             events: {
                                 click: function(e) {
-                                    if (video && !isTouchDevice())
+                                    if (video && (!isTouchDevice() || !chart.tooltip.isHidden))
                                         window.open(video);
                                 }
                             },
