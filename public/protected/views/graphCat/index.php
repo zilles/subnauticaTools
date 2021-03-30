@@ -38,6 +38,12 @@
     }
 </style>
 <script>
+    function isTouchDevice() {
+        return (('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0));
+    }
+
     var game = ['9dom836p','76rx0ze6'];
 
     var app = new Vue({
@@ -93,16 +99,21 @@
                                     video = x.uri;
                             })
                         }
+
+                        let videotext = video? (video+"<br/>(click point to launch video)"):"";
+                        if (isTouchDevice())
+                            videotext = '<a href="'+video+'">'+video+'</a>';
+
                         let point = {
                             x:new Date(run.date).getTime(),
                             y:value,
                             events: {
                                 click: function(e) {
-                                    if (video)
+                                    if (video && !isTouchDevice())
                                         window.open(video);
                                 }
                             },
-                            custom: {video: video ? (video+"<br/>(click point to launch video)"):"", comment: run.comment, wr: wr ? "WR" : ""}
+                            custom: {video: videotext, comment: run.comment, wr: wr ? "WR" : ""}
                         };
                         if (len == 0 || wr)
                             point.dataLabels= {
@@ -286,6 +297,7 @@
             series: series,
         });
     }
+
     function sizeGraph()
     {
         let height = (window.innerHeight - 150);
