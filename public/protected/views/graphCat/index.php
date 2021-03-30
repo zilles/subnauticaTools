@@ -101,13 +101,15 @@
                         }
 
                         let videotext = video? (video+"<br/>(click point to launch video)"):"";
+                        if (isTouchDevice())
+                            videotext = '<a href="'+video+'">'+video+'</a>';
 
                         let point = {
                             x:new Date(run.date).getTime(),
                             y:value,
                             events: {
                                 click: function(e) {
-                                    if (video && (!isTouchDevice() || !chart.tooltip.isHidden))
+                                    if (video && !isTouchDevice())
                                         window.open(video);
                                 }
                             },
@@ -247,7 +249,7 @@
                     whiteSpace: 'normal'
                 },
 
- //               stickOnContact: true,
+                stickOnContact: isTouchDevice(),
                 headerFormat: '<b>{series.name} - {point.x:%b %e, %Y} - ({point.y:%k:%M:%S}) {point.custom.wr}</b><br/>',
                 pointFormat: '{point.custom.comment}<br/><br/>{point.custom.video}'
             },
