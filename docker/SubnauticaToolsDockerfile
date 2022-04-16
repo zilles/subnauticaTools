@@ -1,0 +1,48 @@
+FROM php:7.2-apache-buster
+# add backports repository
+COPY php-apache/backports.list /etc/apt/sources.list.d/backports.list
+
+## update apt-get
+RUN apt-get update
+
+# Install weasyprint from backports
+RUN apt install -y -t buster-backports weasyprint
+
+## add PHP packages packages
+RUN  apt-get install -y libzip-dev libcurl4-gnutls-dev libpng-dev libxml2-dev libapache2-mod-xsendfile
+
+RUN docker-php-ext-install curl gd iconv pdo pdo_mysql mysqli soap zip xml intl
+
+## Imagick
+RUN apt-get install -y libmagickwand-dev --no-install-recommends
+## Version is not officially released https://pecl.php.net/get/imagick but following works for PHP 8
+RUN mkdir -p /usr/src/php/ext/imagick; \
+    curl -fsSL https://github.com/Imagick/imagick/archive/06116aa24b76edaf6b1693198f79e6c295eda8a9.tar.gz | tar xvz -C "/usr/src/php/ext/imagick" --strip 1; \
+    docker-php-ext-install imagick;
+
+RUN pear install pecl/solr
+
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+## mailparse
+## xmlrpc
+
+# Apache Config
+COPY php-apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Bash
+COPY php-apache/bash_profile /root/.bashrc
+
+# PHP.ini
+COPY php-apache/php.ini /usr/local/etc/php/php.ini
+COPY php-apache/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+# mod rewrite!
+RUN a2enmod rewrite
+RUN a2enmod ssl
+RUN a2enmod xsendfile
+
+# enable Sites
+RUN a2ensite 000-default.conf
+RUN service apache2 restart

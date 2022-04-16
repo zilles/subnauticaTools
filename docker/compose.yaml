@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+    php:
+        container_name: SubnauticaTools
+        build:
+            context: .
+            dockerfile: SubnauticaToolsDockerfile
+        volumes:
+            - "..:/var/www/subnauticaTools"
+            - "./php-apache/logs:/var/log/apache2"
+        ports:
+            - 80:80
+        hostname: subnautica.local
+        domainname: local
+        tty: true
+        environment:
+            DEBUG_ADDRESS: ${DEBUG_ADDRESS-host.docker.internal}
