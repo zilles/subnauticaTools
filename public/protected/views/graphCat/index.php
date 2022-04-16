@@ -4,7 +4,7 @@
 <?php } else {?>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 <?php } ?>
-<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 
 <div id="app">
