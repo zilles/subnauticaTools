@@ -8,7 +8,7 @@
 $config = CMap::mergeArray($config, array(
     'params'=>array(
         'debug'=>true,  // SET TO FALSE ON LIVE SITE
-        'weasyprint'=>'C:\\Users\\zilles\\AppData\\Local\\Programs\\Python\\Python37\\Scripts\\weasyprint',
+        'weasyprint'=>'/usr/bin/weasyprint',
     ))
 );
 
