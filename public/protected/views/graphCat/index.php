@@ -22,8 +22,14 @@
             </option>
         </select>
     </span>
+    <div id="loading" v-if="loading">
+        <p>
+            <div class="lds-dual-ring"></div>
+            Loading run data {{runs.length}}...
+        </p>
+    </div>
     <div id="container" style="width:100%; height:50vw;"></div>
-    <?php if (yiiparam("debug")) { ?>
+    <?php if (false) { //yiiparam("debug")) { ?>
     <pre v-for="run in runs" v-if="runMatches(run,variables) || run.players.data[0].names.international=='salvner'">
     {{ run }}
     </pre>
@@ -53,6 +59,7 @@
             categories: [],
             variables: [],
             runs: [],
+            loading: false
         },
         computed: {
             cat: function() {
@@ -151,7 +158,14 @@
 
                                     if (response.data.data.length === 200)
                                         getRuns(offset+200);
-                                    else vm.createGraph();
+                                    else
+                                    {
+                                        vm.loading = false;
+                                        setTimeout(function() {
+                                            vm.createGraph();
+                                        },0);
+                                    }
+
                                 }
                             })
                             .catch(function (error) {
@@ -159,6 +173,7 @@
                                 console.log(error);
                             });
                     }
+                    vm.loading = true;
                     axios.get('https://www.speedrun.com/api/v1/categories/'+val+'/variables')
                         .then(function (response) {
                             // handle success

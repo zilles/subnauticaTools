@@ -314,3 +314,28 @@ div.search-form
 #submark h7 {
 	margin-bottom: .5em;
 }
+
+.lds-dual-ring {
+	display: inline-block;
+	width: 3em;
+	height: 2em;
+}
+.lds-dual-ring:after {
+	content: " ";
+	display: block;
+	width: 1em;
+	height: 1em;
+	margin: 1em;
+	border-radius: 50%;
+	border: .2em solid #666;
+	border-color: #666 transparent #666 transparent;
+	animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
