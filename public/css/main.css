@@ -55,7 +55,7 @@ body
 #mainmenu ul
 {
 	padding:6px 20px 5px 20px;
-	margin:0px;
+	margin:0;
 }
 
 #mainmenu ul li
@@ -193,7 +193,7 @@ div.search-form
 
 .portlet-content li
 {
-	padding: 2px 0 4px 0px;
+	padding: 2px 0 4px 0;
 }
 
 .operations
@@ -310,8 +310,7 @@ div.search-form
 #submark h3,
 #submark h4,
 #submark h5,
-#submark h6,
-#submark h7 {
+#submark h6 {
 	margin-bottom: .5em;
 }
 
@@ -338,4 +337,9 @@ div.search-form
 	100% {
 		transform: rotate(360deg);
 	}
+}
+#leaderboard_link {
+	float:right;
+	font-size: 80%;
+	color: gray;
 }
