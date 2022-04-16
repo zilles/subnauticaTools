@@ -61,7 +61,6 @@
         },
         methods: {
             runMatches: function(run,variables) {
-                let vm = this;
                 return _.every(variables, function(variable) {
                     return run.values[variable.id] === variable.selected;
                 });
@@ -108,18 +107,18 @@
                             x:new Date(run.date).getTime(),
                             y:value,
                             events: {
-                                click: function(e) {
+                                click: function() {
                                     if (video && !isTouchDevice())
                                         window.open(video);
                                 }
                             },
                             custom: {video: videotext, comment: run.comment, wr: wr ? "WR" : ""}
                         };
-                        if (len == 0 || wr)
+                        if (len === 0 || wr)
                             point.dataLabels= {
-                                format: (len==0?player_name+" ":"")+(wr?"WR":""),
+                                format: (len===0?player_name+" ":"")+(wr?"WR":""),
                             };
-                        if (len==0 || value < seriesMap[player.id].data[len-1].y)
+                        if (len===0 || value < seriesMap[player.id].data[len-1].y)
                             seriesMap[player.id].data.push(point);
                     }
                 });
@@ -143,14 +142,14 @@
                             .then(function (response) {
                                 // handle success
                                 // if it still matches
-                                if (val == vm.category)
+                                if (val === vm.category)
                                 {
-                                    if (offset == 0)
+                                    if (offset === 0)
                                         vm.runs = response.data.data;
                                     else
                                         vm.runs = vm.runs.concat(response.data.data);
 
-                                    if (response.data.data.length == 200)
+                                    if (response.data.data.length === 200)
                                         getRuns(offset+200);
                                     else vm.createGraph();
                                 }
@@ -199,7 +198,7 @@
 
         series.unshift({ name: 'Show/Hide all',  marker: { enabled:false}});
 
-        var myChart = Highcharts.chart('container', {
+        Highcharts.chart('container', {
             chart: {
                 type: 'line',
                 events: {
