@@ -6,14 +6,15 @@ function isTouchDevice() {
 
 var game = ['9dom836p','76rx0ze6'];
 
-var app = new Vue({
-    el: '#app',
-    data: {
-        category: '',
-        categories: [],
-        variables: [],
-        runs: [],
-        loading: false
+var app = Vue.createApp({
+    data() {
+        return {
+            category: '',
+            categories: [],
+            variables: [],
+            runs: [],
+            loading: false
+        }
     },
     computed: {
         cat: function() {
@@ -21,12 +22,12 @@ var app = new Vue({
         }
     },
     methods: {
-        runMatches: function(run,variables) {
+        runMatches(run,variables) {
             return _.every(variables, function(variable) {
                 return run.values[variable.id] === variable.selected;
             });
         },
-        createGraph: function()
+        createGraph()
         {
             let vm = this;
             let wrTime = Number.MAX_SAFE_INTEGER;
@@ -94,7 +95,7 @@ var app = new Vue({
         }
     },
     watch: {
-        category: function(val) {
+        category(val) {
             if (val)
             {
                 let vm = this;
@@ -132,8 +133,8 @@ var app = new Vue({
                     .then(function (response) {
                         // handle success
                         vm.variables = response.data.data;
-                        _.each(response.data.data, function(variable) {
-                            Vue.set(variable,'selected',_.keys(variable.values.values)[0]);
+                        _.each(vm.variables, function(variable) {
+                            variable.selected = _.keys(variable.values.values)[0];
                         });
                         getRuns(0);
                     })
@@ -143,25 +144,31 @@ var app = new Vue({
                     });
             }
         }
+    },
+    mounted() {
+        let catPromises = _.map(game, function(g) {
+            return axios.get('https://www.speedrun.com/api/v1/games/'+g+'/categories');
+        });
+
+        var vm = this;
+        Promise.all(catPromises)
+            .then(function (response) {
+                // handle success
+                //console.log(response);
+                let combined = response[0].data.data.concat(response[1].data.data);
+                vm.categories = combined;
+                vm.category = combined[0].id;
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            });
     }
+
 })
 
-let catPromises = _.map(game, function(g) {
-    return axios.get('https://www.speedrun.com/api/v1/games/'+g+'/categories');
-});
+app.mount('#app')
 
-Promise.all(catPromises)
-    .then(function (response) {
-        // handle success
-        //console.log(response);
-        let combined = response[0].data.data.concat(response[1].data.data);
-        app.categories = combined;
-        app.category = combined[0].id;
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error);
-    });
 
 function makeChart(name, series) {
 

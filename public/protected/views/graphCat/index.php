@@ -6,7 +6,7 @@
         </option>
     </select>
     <span v-for="variable in variables">
-        {{variable.name}}:
+        &nbsp;{{variable.name}}:
         <select v-model="variable.selected" v-on:change="createGraph()">
             <option v-for="(value,key) in variable.values.values" :key="key" v-bind:value="key">
                 {{value.label}}
@@ -27,9 +27,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <?php if (yiiparam("debug")) { ?>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
 <?php } else {?>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://unpkg.com/vue@3.2.33"></script>
 <?php } ?>
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
