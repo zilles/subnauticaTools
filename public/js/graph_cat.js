@@ -66,6 +66,55 @@ var app = Vue.createApp({
         setHash(segs) {
             window.location.hash = _.map(segs,function(x) { return encodeURIComponent(x);}).join("/");
         },
+        updateCategoryFromHash() {
+            var categoryChanged = false;
+            var updateHash = true;
+            if (this.segments.length>0)
+            {
+                var start = _.find(this.categories, {name:this.segments[0]});
+                if (start)
+                {
+                    if (this.category !== start.id)
+                    {
+                        this.category = start.id;
+                        this.category_select = start.name;
+                        categoryChanged = true;
+                    }
+                    updateHash = false;
+                }
+            }
+            if (updateHash)
+                this.setHash([this.categories[0].name]);
+            return categoryChanged;
+        },
+        updateVariablesFromHash() {
+            var newSegs = [this.segments[0]];
+            var switchHash = false;
+            var vm = this;
+            _.each(this.variables, function(variable,index) {
+                var updateHash = true;
+                var label = vm.segments[index+1];
+                if (label)
+                {
+                    var startKey = _.findKey(variable.values.values, {label: label});
+                    if (startKey) {
+                        variable.selected = startKey;
+                        variable.hash = startKey;
+                        newSegs.push(label);
+                        updateHash = false;
+                    }
+                }
+
+                if (updateHash)
+                {
+                    variable.selected = _.keys(variable.values.values)[0];
+                    newSegs.push(variable.values.values[variable.selected].label);
+                    switchHash = true;
+                }
+            });
+            if (switchHash)
+                this.setHash(newSegs);
+        },
         createGraph()
         {
             let vm = this;
@@ -139,23 +188,13 @@ var app = Vue.createApp({
             segs[0] = val;
             this.setHash(segs);
         },
-        segments(newSeg,oldSeg) {
-            var createGraph = !this.loading;
-            if (newSeg.length>0 && (oldSeg.length===0 || oldSeg[0]!==newSeg[0]))
+        segments() {
+            if (!this.updateCategoryFromHash())
             {
-                var start = _.find(this.categories, {name:newSeg[0]});
-                if (start)
-                {
-                    this.category = start.id;
-                    this.category_select = start.name;
-                    createGraph = false;
-                }
+                this.updateVariablesFromHash();
+                if (!this.loading)
+                    this.createGraph();
             }
-            _.each(this.variables, function(variable, index) {
-                variable.hash = _.findKey(variable.values.values, {label:newSeg[index+1]});
-            });
-            if (createGraph)
-                this.createGraph();
         },
         category(val) {
             if (val)
@@ -195,32 +234,7 @@ var app = Vue.createApp({
                     .then(function (response) {
                         // handle success
                         vm.variables = response.data.data;
-                        // noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
-                        var newSegs = [vm.segments[0]];
-                        var switchHash = false;
-                        _.each(vm.variables, function(variable,index) {
-                            var updateHash = true;
-                            var label = vm.segments[index+1];
-                            if (label)
-                            {
-                                var startKey = _.findKey(variable.values.values, {label: label});
-                                if (startKey) {
-                                    variable.selected = startKey;
-                                    variable.hash = startKey;
-                                    newSegs.push(label);
-                                    updateHash = false;
-                                }
-                            }
-
-                            if (updateHash)
-                            {
-                                variable.selected = _.keys(variable.values.values)[0];
-                                newSegs.push(variable.values.values[variable.selected].label);
-                                switchHash = true;
-                            }
-                        });
-                        if (switchHash)
-                            vm.setHash(newSegs);
+                        vm.updateVariablesFromHash();
                         getRuns(0);
                     })
                     .catch(function (error) {
@@ -241,20 +255,7 @@ var app = Vue.createApp({
                 // handle success
                 //console.log(response);
                 vm.categories = response[0].data.data.concat(response[1].data.data);
-                var updateHash = true;
-                if (vm.segments[0])
-                {
-                    var start = _.find(vm.categories, {name:vm.segments[0]});
-                    if (start)
-                    {
-                        vm.category = start.id;
-                        vm.category_select = start.name;
-                        updateHash = false;
-                    }
-                }
-                if (updateHash)
-                    vm.setHash([vm.categories[0].name]);
-
+                vm.updateCategoryFromHash();
             })
             .catch(function (error) {
                 // handle error
