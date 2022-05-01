@@ -1,3 +1,25 @@
+/*
+Handling the hash path
+
+Initial load:
+Load the categories:
+Parse the hash, splitting on /
+If the first section is a valid category name, load that category
+If not change hash so that first category name is added to path
+
+Category load:
+Load variables for category.
+
+If hash splits after first one map to valid variables then set variables
+Otherwise reset hash to be first variables
+
+Whenever hash changes:
+If category changes, load new category that matches.  Set variables to defaults.
+If variables change reload graph.
+
+ */
+
+
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
         (navigator.maxTouchPoints > 0) ||
@@ -10,22 +32,39 @@ var app = Vue.createApp({
     data() {
         return {
             category: '',
+            category_select: '',
             categories: [],
             variables: [],
             runs: [],
+            currentPath: window.location.hash,
             loading: false
         }
     },
     computed: {
-        cat: function() {
+        cat() {
             return _.find(this.categories, {id:this.category});
+        },
+        segments() {
+            return _.map(this.currentPath.substring(1).split("/"), function(x) {
+                return decodeURI(x);
+            });
         }
     },
     methods: {
         runMatches(run,variables) {
             return _.every(variables, function(variable) {
-                return run.values[variable.id] === variable.selected;
+                return run.values[variable.id] === variable.hash;
             });
+        },
+        updateVariables() {
+            var newSegs = [this.segments[0]];
+            _.each(this.variables, function(variable) {
+                newSegs.push(variable.values.values[variable.selected].label);
+            });
+            this.setHash(newSegs);
+        },
+        setHash(segs) {
+            window.location.hash = _.map(segs,function(x) { return encodeURIComponent(x);}).join("/");
         },
         createGraph()
         {
@@ -95,6 +134,29 @@ var app = Vue.createApp({
         }
     },
     watch: {
+        category_select(val) {
+            var segs = this.segments.slice();
+            segs[0] = val;
+            this.setHash(segs);
+        },
+        segments(newSeg,oldSeg) {
+            var createGraph = !this.loading;
+            if (newSeg.length>0 && (oldSeg.length===0 || oldSeg[0]!==newSeg[0]))
+            {
+                var start = _.find(this.categories, {name:newSeg[0]});
+                if (start)
+                {
+                    this.category = start.id;
+                    this.category_select = start.name;
+                    createGraph = false;
+                }
+            }
+            _.each(this.variables, function(variable, index) {
+                variable.hash = _.findKey(variable.values.values, {label:newSeg[index+1]});
+            });
+            if (createGraph)
+                this.createGraph();
+        },
         category(val) {
             if (val)
             {
@@ -133,9 +195,32 @@ var app = Vue.createApp({
                     .then(function (response) {
                         // handle success
                         vm.variables = response.data.data;
-                        _.each(vm.variables, function(variable) {
-                            variable.selected = _.keys(variable.values.values)[0];
+                        // noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
+                        var newSegs = [vm.segments[0]];
+                        var switchHash = false;
+                        _.each(vm.variables, function(variable,index) {
+                            var updateHash = true;
+                            var label = vm.segments[index+1];
+                            if (label)
+                            {
+                                var startKey = _.findKey(variable.values.values, {label: label});
+                                if (startKey) {
+                                    variable.selected = startKey;
+                                    variable.hash = startKey;
+                                    newSegs.push(label);
+                                    updateHash = false;
+                                }
+                            }
+
+                            if (updateHash)
+                            {
+                                variable.selected = _.keys(variable.values.values)[0];
+                                newSegs.push(variable.values.values[variable.selected].label);
+                                switchHash = true;
+                            }
                         });
+                        if (switchHash)
+                            vm.setHash(newSegs);
                         getRuns(0);
                     })
                     .catch(function (error) {
@@ -155,14 +240,30 @@ var app = Vue.createApp({
             .then(function (response) {
                 // handle success
                 //console.log(response);
-                let combined = response[0].data.data.concat(response[1].data.data);
-                vm.categories = combined;
-                vm.category = combined[0].id;
+                vm.categories = response[0].data.data.concat(response[1].data.data);
+                var updateHash = true;
+                if (vm.segments[0])
+                {
+                    var start = _.find(vm.categories, {name:vm.segments[0]});
+                    if (start)
+                    {
+                        vm.category = start.id;
+                        vm.category_select = start.name;
+                        updateHash = false;
+                    }
+                }
+                if (updateHash)
+                    vm.setHash([vm.categories[0].name]);
+
             })
             .catch(function (error) {
                 // handle error
                 console.log(error);
             });
+
+        window.addEventListener('hashchange', function() {
+            vm.currentPath = window.location.hash
+        })
     }
 
 })

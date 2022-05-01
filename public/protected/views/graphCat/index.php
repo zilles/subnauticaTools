@@ -1,13 +1,13 @@
 <div id="app">
     <a id="leaderboard_link" target="_blank" :href="cat.weblink" v-if="cat">{{cat.name}} Leaderboard</a>
-    <select v-model="category">
-        <option v-for="cat in categories" :key="cat.id" v-bind:value="cat.id">
+    <select v-model="category_select">
+        <option v-for="cat in categories" :key="cat.name" v-bind:value="cat.name">
             {{cat.name}}
         </option>
     </select>
     <span v-for="variable in variables">
         &nbsp;{{variable.name}}:
-        <select v-model="variable.selected" v-on:change="createGraph()">
+        <select v-model="variable.selected" v-on:change="updateVariables()">
             <option v-for="(value,key) in variable.values.values" :key="key" v-bind:value="key">
                 {{value.label}}
             </option>
