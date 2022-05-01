@@ -69,19 +69,16 @@ var app = Vue.createApp({
         updateCategoryFromHash() {
             var categoryChanged = false;
             var updateHash = true;
-            if (this.segments.length>0)
+            var start = _.find(this.categories, {name:this.segments[0]});
+            if (start)
             {
-                var start = _.find(this.categories, {name:this.segments[0]});
-                if (start)
+                if (this.category !== start.id)
                 {
-                    if (this.category !== start.id)
-                    {
-                        this.category = start.id;
-                        this.category_select = start.name;
-                        categoryChanged = true;
-                    }
-                    updateHash = false;
+                    this.category = start.id;
+                    this.category_select = start.name;
+                    categoryChanged = true;
                 }
+                updateHash = false;
             }
             if (updateHash)
                 this.setHash([this.categories[0].name]);
