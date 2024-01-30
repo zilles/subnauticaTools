@@ -133,7 +133,7 @@ EOL;
     {
         $html = str_replace('/images','images', $html);
         $runtime = dirname(__DIR__).DIRECTORY_SEPARATOR."runtime";
-        $pdfFile = tempnam($runtime, "pdf");
+        $finalFile = $pdfFile = tempnam($runtime, "pdf");
         $htmlFile = tempnam($runtime, "html");
         file_put_contents($htmlFile, $html);
 
@@ -141,24 +141,47 @@ EOL;
 
         // Get a file path to the public directory
         $weasyprint = CHtml::value(Yii::app()->params,"weasyprint","weasyprint");
-        $format = $png ? "png -r 192" : "pdf";
-        $cmd = "$weasyprint -u $baseurl -e utf8 -f $format -v $htmlFile $pdfFile";
+//        $format = $png ? "png -r 192" : "pdf";
+        $cmd = "$weasyprint -u $baseurl -e utf8 -v $htmlFile $pdfFile";
         $results = self::my_exec($cmd);
+        unlink($htmlFile);
         if ($results['return'] != 0)
             throw new CException($results['stderr']."\n".$results['stdout']);
 
         // write results to log file for testing
         file_put_contents("protected/runtime/weasy.log", print_r($results, true),FILE_APPEND | LOCK_EX );
 
-        if (file_exists($pdfFile))
+        if (file_exists($pdfFile) && $png)
+        {
+            $finalFile = $pngFile = "{$pdfFile}-1.png";
+            $pdftoppm = CHtml::value(Yii::app()->params,"pdftoppm","pdftoppm");
+            $cmd = "$pdftoppm -png $pdfFile $pdfFile";
+            $results = self::my_exec($cmd);
+            unlink($pdfFile);
+            if ($results['return'] != 0)
+                throw new CException($results['stderr']."\n".$results['stdout']);
+            // write results to log file for testing
+            file_put_contents("protected/runtime/weasy.log", print_r($results, true),FILE_APPEND | LOCK_EX );
+
+            // delete any extra pages
+            foreach (range(2,1000) as $page)
+            {
+                $extra = "{$pdfFile}-$page.png";
+                if (file_exists($extra))
+                    unlink($extra);
+                else
+                    break;
+            }
+        }
+
+        if (file_exists($finalFile))
         {
             $mime = $png ? "image/png" : "application/pdf";
             $name = "SubnauticaNotes.".($png? "png":"pdf");
-            self::streamFile($pdfFile, $name, true, $mime);
-            unlink($pdfFile);
+            self::streamFile($finalFile, $name, true, $mime);
+           unlink($finalFile);
         }
 
-        unlink($htmlFile);
     }
 
     // Uncomment the following methods and override them if needed
