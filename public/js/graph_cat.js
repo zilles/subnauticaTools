@@ -122,7 +122,7 @@ var app = Vue.createApp({
                 {
                     let value = run.times.primary_t*1000;
                     let player = run.players.data[0];
-                    let player_name=player.names.international;
+                    let player_name= player.hasOwnProperty("names") ? player.names.international : player.name;
                     let wr = value < wrTime;
                     if (wr)
                         wrTime = value;
